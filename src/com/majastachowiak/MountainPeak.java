@@ -54,15 +54,5 @@ public class MountainPeak {
                 );
 
     }
-
-    @Override
-    public String toString() {
-        return "SzczytGórski{" +
-                "nazwa='" + mountainPeak + '\'' +
-                ", wysokosc=" + height +
-                ", przewyzszenie=" + verticalGain +
-                ", odlegloscWKilometrach=" + distance +
-                '}';
-    }
 }
 
