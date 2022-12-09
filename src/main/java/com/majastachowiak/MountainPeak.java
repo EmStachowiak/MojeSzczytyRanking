@@ -25,6 +25,7 @@ public class MountainPeak {
     }
 
     public void displayTrip() {
+        System.out.println("Numer ID wycieczki: " + id);
         System.out.println("Nazwa szczytu: " + mountainPeak);
         System.out.println("Wysokość: " + height);
         System.out.println("Przewyższenie: " + verticalGain);

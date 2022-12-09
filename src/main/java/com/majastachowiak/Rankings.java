@@ -19,13 +19,12 @@ public class Rankings {
     int sumOfTrips;
 
     StandardServiceRegistry ssr= new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
-
     Metadata metadata = new MetadataSources(ssr).getMetadataBuilder().build();
     SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
-    Session session =null;
-    Transaction transaction = null;
 
     public void addTrip() {
+        Session session =null;
+        Transaction transaction = null;
 
         try {
             System.out.print("Wpisz nazwę szczytu: ");
@@ -51,10 +50,14 @@ public class Rankings {
 
         } catch (Exception e) {
             e.printStackTrace();
+            if(transaction != null) transaction.rollback();
         }
+        session.close();
     }
 
     public void displayAllTrips() {
+        Session session =null;
+        Transaction transaction = null;
 
         try {
             session = sessionFactory.openSession();
@@ -62,18 +65,28 @@ public class Rankings {
             String hql = "FROM MountainPeak";
             Query query = session.createQuery(hql);
             List results = query.getResultList();
+            sumOfTrips = results.size();
 
-            Iterator <MountainPeak> iterator = results.iterator();
-            while(iterator.hasNext()) {
-                MountainPeak mp = iterator.next();
-                mp.displayTrip();
+            if (results.isEmpty()) {
+                System.out.println("Uuuuu ale słabo... Czas iść w góry!\n");
+            } else {
+                System.out.println("Byłeś na: " + sumOfTrips + " wycieczkach!\n");
+                Iterator<MountainPeak> iterator = results.iterator();
+                while (iterator.hasNext()) {
+                    MountainPeak mp = iterator.next();
+                    mp.displayTrip();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            if(transaction != null) transaction.rollback();
         }
+        session.close();
 
 
     }  public void displayRankings() {
+        Session session =null;
+        Transaction transaction = null;
 
         try {
             session = sessionFactory.openSession();
@@ -141,7 +154,6 @@ public class Rankings {
                         .limit(1)
                         .collect(Collectors.toList());
 
-
                 System.out.println("Najtrudniejszy szczyt: ");
 
                 for (MountainPeak s : mostDifficultTrip) {
@@ -153,14 +165,53 @@ public class Rankings {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            if(transaction != null) transaction.rollback();
         }
+        session.close();
+    }
+
+    public void deleteOneTrip(Integer id) {
+        Session session =null;
+        Transaction transaction = null;
+
+        try {
+            if (!listOfTrips.contains(id)) {
+                session = sessionFactory.openSession();
+                transaction = session.beginTransaction();
+                MountainPeak mountainPeak = (MountainPeak) session.get(MountainPeak.class, id);
+                session.delete(mountainPeak);
+                transaction.commit();
+                System.out.println("Wycieczka na szczyt: " + mountainPeak.getMountainPeak() + "- została skasowana.\n");
+                sumOfTrips--;
+            }  else {
+                System.out.println("Spróbuj ponownie.");
+            }
+            } catch (IllegalArgumentException e) {
+            System.out.println("Wycieczka o podanym ID Nie istnieje na liście, spróbuj ponownie.\n");
+        }
+            catch(Exception e){
+                e.printStackTrace();
+                if (transaction != null) transaction.rollback();
+            }
+
+
     }
     public void clearList() {
-        String q= "DELETE FROM MountainPeak";
-        Query query = session.createQuery(q);
+        Session session =null;
+        Transaction transaction = null;
+
+        try {
+        session = sessionFactory.openSession();
+        transaction = session.beginTransaction();
+        Query query = session.createQuery("DELETE FROM MountainPeak");
         query.executeUpdate();
-        //listOfTrips.clear();
-        System.out.println("Lista została skasowana.");
+        transaction.commit();
+        listOfTrips.clear();
+        System.out.println("Lista została skasowana.\n");
+    } catch (Exception e) {
+            e.printStackTrace();
+            if(transaction != null) transaction.rollback();
+        }
     }
 }
 
