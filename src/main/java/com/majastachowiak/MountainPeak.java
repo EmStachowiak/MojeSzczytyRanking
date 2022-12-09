@@ -1,30 +1,27 @@
 package com.majastachowiak;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class MountainPeak {
 
+    private int id;
     private String mountainPeak;
     private int height;
     private int verticalGain;
     private float distance;
 
     public MountainPeak(String mountainPeak, int height, int verticalGain, float distance) {
+        this.id=0;
         this.mountainPeak = mountainPeak;
         this.height = height;
         this.verticalGain = verticalGain;
         this.distance = distance;
-
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getVerticalGain() {
-        return verticalGain;
-    }
-
-    public float getDistance() {
-        return distance;
     }
 
     public void displayTrip() {
@@ -52,6 +49,13 @@ public class MountainPeak {
                 + " \tODLEGŁOŚĆ: " + distance + " kilometrów"
                 + "\tWYSOKOŚĆ SZCZYTU: " + height + " m n.p.m."
                 );
+    }
+
+    @Override
+    public String toString() {
+        return "SZCZYT: " + mountainPeak + " \tPRZEWYŻSZENIE: " + verticalGain + " metrów"
+                + " \tODLEGŁOŚĆ: " + distance + " kilometrów"
+                + "\tWYSOKOŚĆ SZCZYTU: " + height + " m n.p.m.";
 
     }
 }
